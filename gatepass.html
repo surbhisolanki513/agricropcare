@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gate Pass System | Agri Crop Care</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #064e3b;
+            --accent: #10b981;
+            --bg: #f1f5f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary);
+            color: white;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .sidebar-header {
+            padding: 25px 15px;
+            font-size: 18px;
+            font-weight: 800;
+            text-align: center;
+            border-bottom: 1px solid #065f46;
+            color: var(--accent);
+        }
+
+        .nav-link {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+
+        .nav-link.active {
+            background: #065f46;
+            color: white;
+            border-right: 4px solid var(--accent);
+        }
+
+        .main-container {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 5px;
+        }
+
+        .btn-ai {
+            background: #b45309;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-generate {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        /* Gate Pass Design (From your Photo) */
+        #printablePass {
+            width: 700px;
+            padding: 30px;
+            border: 2px solid #000;
+            background: white;
+            margin: 30px auto;
+            display: none;
+            color: #000;
+        }
+
+        .pass-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .weight-box-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .weight-box {
+            border: 1px solid #000;
+            padding: 10px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .weight-box b {
+            font-size: 18px;
+        }
+
+        @media print {
+
+            .sidebar,
+            .no-print,
+            .btn-generate,
+            .btn-ai,
+            .card,
+            h2 {
+                display: none !important;
+            }
+
+            .main-container {
+                margin: 0;
+                padding: 0;
+            }
+
+            #printablePass {
+                display: block !important;
+                border: 1px solid #000;
+                width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">AGRI CROP CARE</div>
+        <a href="index.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="inward.html" class="nav-link"><i class="fas fa-file-import"></i> Inward Entry</a>
+        <a href="outward.html" class="nav-link"><i class="fas fa-file-export"></i> Outward Entry</a>
+        <a href="reports.html" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Billing</a>
+        <a href="gatepass.html" class="nav-link active"><i class="fas fa-ticket-alt"></i> Gate Pass</a>
+    </div>
+
+    <div class="main-container">
+        <h2 class="no-print">Gate Pass Management</h2>
+
+        <!-- AI SCAN BUTTON -->
+        <div class="card no-print" style="background: #fffbeb; border: 1px dashed #f59e0b;">
+            <input type="file" id="aiInput" style="display:none;" accept="image/*">
+            <button class="btn-ai" onclick="alert('AI Scanning feature will be integrated soon!')">
+                <i class="fas fa-magic"></i> AI Smart Scan (Upload Photo)
+            </button>
+        </div>
+
+        <!-- MANUAL FORM -->
+        <div class="card no-print">
+            <div class="grid-3">
+                <div><label>Activity Type</label>
+                    <select id="p_type">
+                        <option value="DEPOSIT">Deposit (Inward)</option>
+                        <option value="WITHDRAWL">Withdrawal (Outward)</option>
+                    </select>
+                </div>
+                <div><label>Date</label><input type="date" id="p_date"></div>
+                <div><label>Pass No.</label><input type="text" id="p_no" placeholder="e.g. 981"></div>
+
+                <div><label>Warehouse Name</label><input type="text" id="p_wh"
+                        placeholder="e.g. Bhalala Dharmendrabhai"></div>
+                <div><label>Client Name</label><input type="text" id="p_cl" placeholder="e.g. Sureshwer Corporation">
+                </div>
+                <div><label>Commodity</label><input type="text" id="p_com" placeholder="Wheat"></div>
+
+                <div><label>Truck Number</label><input type="text" id="p_truck" placeholder="GJ 17 XX 4905"></div>
+                <div><label>Total Bags</label><input type="number" id="p_bags" placeholder="326"></div>
+                <div><label>Moisture %</label><input type="text" id="p_moist" placeholder="9.6%"></div>
+
+                <div><label>Gross Weight (kg)</label><input type="number" id="p_gross" oninput="calcNet()"
+                        placeholder="23675"></div>
+                <div><label>Tare Weight (kg)</label><input type="number" id="p_tare" oninput="calcNet()"
+                        placeholder="7205"></div>
+                <div><label>Net Weight (kg)</label><input type="number" id="p_net" readonly placeholder="16470"></div>
+            </div>
+            <br>
+            <button class="btn-generate" onclick="generatePass()">Generate Gate Pass</button>
+        </div>
+
+        <!-- PRINTABLE PASS (Your Photo Design) -->
+        <div id="printablePass">
+            <div class="pass-header">
+                <div>
+                    <h1 style="margin:0; font-size: 24px;">AGRI CROP CARE WAREHOUSE & LOGISTICS</h1>
+                    <p style="font-size:12px;">Warehouse: Vraj 3, Patidad road, Gundala, Gondal | Mob: 9913305200</p>
+                </div>
+                <div style="text-align:right;">
+                    <h2 style="margin:0; background:#000; color:#fff; padding:5px 15px;">GATE PASS</h2>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin:15px 0;">
+                <span>Date: <b id="s_date"></b></span>
+                <span>Pass No: <b id="s_no"></b></span>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:14px; line-height:2;">
+                <div>Warehouse: <b id="s_wh"></b></div>
+                <div>Activity: <b id="s_type"></b></div>
+                <div>Client Name: <b id="s_cl"></b></div>
+                <div>Truck No: <b id="s_truck"></b></div>
+                <div>Commodity: <b id="s_com"></b></div>
+                <div>Moisture: <b id="s_moist"></b></div>
+                <div>Total Bags: <b id="s_bags"></b></div>
+            </div>
+
+            <div class="weight-box-container">
+                <div class="weight-box">Gross Wt<br><b id="s_gross">0</b> kg</div>
+                <div class="weight-box">Tare Wt<br><b id="s_tare">0</b> kg</div>
+                <div class="weight-box" style="background:#eee;">Net Wt<br><b id="s_net">0</b> kg</div>
+            </div>
+
+            <div
+                style="margin-top:50px; display:flex; justify-content:space-between; text-align:center; font-size:12px;">
+                <div><br>___________________<br>W/h Supervisor Sign</div>
+                <div><br>___________________<br>Client / Driver Sign</div>
+            </div>
+
+            <button class="no-print" style="margin-top:30px; width:100%; padding:10px; cursor:pointer;"
+                onclick="window.print()">Confirm & Print</button>
+        </div>
+    </div>
+
+    <script>
+        // सेट आज की तारीख
+        document.getElementById('p_date').value = new Date().toISOString().split('T')[0];
+
+        function calcNet() {
+            const gross = parseFloat(document.getElementById('p_gross').value) || 0;
+            const tare = parseFloat(document.getElementById('p_tare').value) || 0;
+            document.getElementById('p_net').value = gross - tare;
+        }
+
+        function generatePass() {
+            const fields = ['p_type', 'p_date', 'p_no', 'p_wh', 'p_cl', 'p_com', 'p_truck', 'p_bags', 'p_moist', 'p_gross', 'p_tare', 'p_net'];
+
+            // डेटा को स्लिप में भरना
+            document.getElementById('s_type').innerText = document.getElementById('p_type').value;
+            document.getElementById('s_date').innerText = document.getElementById('p_date').value;
+            document.getElementById('s_no').innerText = document.getElementById('p_no').value;
+            document.getElementById('s_wh').innerText = document.getElementById('p_wh').value;
+            document.getElementById('s_cl').innerText = document.getElementById('p_cl').value;
+            document.getElementById('s_com').innerText = document.getElementById('p_com').value;
+            document.getElementById('s_truck').innerText = document.getElementById('p_truck').value;
+            document.getElementById('s_bags').innerText = document.getElementById('p_bags').value;
+            document.getElementById('s_moist').innerText = document.getElementById('p_moist').value;
+            document.getElementById('s_gross').innerText = document.getElementById('p_gross').value;
+            document.getElementById('s_tare').innerText = document.getElementById('p_tare').value;
+            document.getElementById('s_net').innerText = document.getElementById('p_net').value;
+
+            document.getElementById('printablePass').style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    </script>
+</body>
+
+</html>

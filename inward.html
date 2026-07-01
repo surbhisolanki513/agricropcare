@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inward Transaction | Agri Crop Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Excel Reading Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #004d43;
+            --accent: #c68a12;
+            --bg: #f4f7f9;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: #334155;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border-top: 4px solid var(--primary);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        /* Excel Section */
+        .excel-box {
+            background: #fdf7e7;
+            border: 2px dashed var(--accent);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .btn-excel {
+            background: #166534;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #f8fafc;
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-header">
+        <h1>Inward Transaction</h1>
+        <p style="font-size: 13px; color: #64748b;">Record incoming goods and assign storage space.</p>
+    </div>
+
+    <div class="grid-layout">
+        <!-- Manual Entry Form -->
+        <div class="left-col">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-file-circle-plus"></i> New Inward Entry</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Client Name *</label>
+                        <select id="in-client"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Commodity *</label>
+                        <select id="in-commodity"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Warehouse Name *</label>
+                        <select id="in-warehouse"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Inward Date *</label>
+                        <input type="date" id="in-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Weight (MT) *</label>
+                        <input type="number" id="in-weight" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>No. of Bags</label>
+                        <input type="number" id="in-bags" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Gate Pass</label>
+                        <input type="text" id="in-gp" placeholder="GP-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Lot No</label>
+                        <input type="text" id="in-lot" placeholder="LOT-101">
+                    </div>
+                </div>
+                <button class="btn-save" onclick="saveInward()"><i class="fa-solid fa-plus"></i> Add Inward
+                    Record</button>
+            </div>
+        </div>
+
+        <!-- Bulk Upload Section -->
+        <div class="right-col">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-file-excel"></i> Bulk Import</div>
+                <div class="excel-box">
+                    <p style="font-size: 12px; margin: 0;">Upload Excel/CSV for multi-entry</p>
+                    <input type="file" id="excel-file" accept=".xlsx, .xls, .csv" style="display:none;"
+                        onchange="handleExcel(event)">
+                    <button class="btn-excel" onclick="document.getElementById('excel-file').click()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Select Excel File
+                    </button>
+                    <p style="font-size: 10px; color: #666; margin-top: 10px;">Format: Date | Client | Commodity |
+                        Warehouse | Qty | Bags</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Table -->
+    <div class="card">
+        <div class="card-title">Recent Inward Logs</div>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Client</th>
+                        <th>Commodity</th>
+                        <th>Warehouse</th>
+                        <th>Qty (MT)</th>
+                        <th>Bags</th>
+                        <th>GP No</th>
+                    </tr>
+                </thead>
+                <tbody id="inward-table-body">
+                    <!-- Data will load here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Data Load From Masters
+        let clients = JSON.parse(localStorage.getItem('agriClients')) || [];
+        let commodities = JSON.parse(localStorage.getItem('agriCommodities')) || [];
+        let warehouses = JSON.parse(localStorage.getItem('agriWarehouses')) || [];
+        let transactions = JSON.parse(localStorage.getItem('agriTransactions')) || [];
+
+        function init() {
+            // Dropdowns bharo
+            document.getElementById('in-client').innerHTML = clients.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            document.getElementById('in-commodity').innerHTML = commodities.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            document.getElementById('in-warehouse').innerHTML = warehouses.map(w => `<option value="${w.name}">${w.name}</option>`).join('');
+            document.getElementById('in-date').valueAsDate = new Date();
+            loadTable();
+        }
+
+        // Manual Save
+        function saveInward() {
+            const entry = {
+                date: document.getElementById('in-date').value,
+                cl: document.getElementById('in-client').value,
+                com: document.getElementById('in-commodity').value,
+                wh: document.getElementById('in-warehouse').value,
+                qty: parseFloat(document.getElementById('in-weight').value) || 0,
+                bags: document.getElementById('in-bags').value || 0,
+                gp: document.getElementById('in-gp').value || '-',
+                type: 'INWARD'
+            };
+
+            if (entry.qty <= 0) { alert("Enter valid weight!"); return; }
+
+            transactions.unshift(entry);
+            updateWarehouse(entry.wh, entry.qty);
+            saveAndRefresh();
+        }
+
+        // --- EXCEL BULK UPLOAD LOGIC ---
+        function handleExcel(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+
+                json.forEach(row => {
+                    const entry = {
+                        date: row.Date || new Date().toISOString().split('T')[0],
+                        cl: row.Client || 'Unknown',
+                        com: row.Commodity || 'General',
+                        wh: row.Warehouse || warehouses[0].name,
+                        qty: parseFloat(row.Qty) || 0,
+                        bags: row.Bags || 0,
+                        gp: row.GP || '-',
+                        type: 'INWARD'
+                    };
+                    transactions.unshift(entry);
+                    updateWarehouse(entry.wh, entry.qty);
+                });
+
+                saveAndRefresh();
+                alert(json.length + " entries added successfully!");
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function updateWarehouse(whName, mt) {
+            let wh = warehouses.find(w => w.name === whName);
+            if (wh) { wh.occupied = parseFloat(wh.occupied) + mt; }
+            localStorage.setItem('agriWarehouses', JSON.stringify(warehouses));
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('agriTransactions', JSON.stringify(transactions));
+            loadTable();
+        }
+
+        function loadTable() {
+            const tbody = document.getElementById('inward-table-body');
+            tbody.innerHTML = transactions.filter(t => t.type === 'INWARD').slice(0, 10).map(t => `
+                <tr>
+                    <td>${t.date}</td>
+                    <td><b>${t.cl}</b></td>
+                    <td>${t.com}</td>
+                    <td>${t.wh}</td>
+                    <td style="color:#16a34a; font-weight:700;">+${t.qty.toFixed(3)}</td>
+                    <td>${t.bags}</td>
+                    <td>${t.gp}</td>
+                </tr>
+            `).join('');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>

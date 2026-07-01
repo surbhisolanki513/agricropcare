@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Crop Care | Cloud ERP System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #004d43;
+            --accent-gold: #c68a12;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #f4f7f6;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-green);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 20px;
+            margin: 0;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 5px solid var(--accent-gold);
+        }
+
+        /* Main Viewport */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-bar {
+            height: 60px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .content-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+
+        /* Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                left: -260px;
+                z-index: 100;
+                height: 100%;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR MENU -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>AGRI CROP CARE</h2>
+            <small>Warehouse Management</small>
+        </div>
+
+        <div class="nav-links">
+            <div class="nav-item active" onclick="loadPage('dashboard.html', this)"><i class="fas fa-th-large"></i>
+                Dashboard</div>
+            <div class="nav-item" onclick="loadPage('inward.html', this)"><i class="fas fa-arrow-circle-down"></i>
+                Inward Register</div>
+            <div class="nav-item" onclick="loadPage('outward.html', this)"><i class="fas fa-arrow-circle-up"></i>
+                Outward Register</div>
+            <div class="nav-item" onclick="loadPage('gatepass.html', this)"><i class="fas fa-ticket-alt"></i> Gate Pass
+            </div>
+            <div class="nav-item" onclick="loadPage('reports.html', this)"><i class="fas fa-file-invoice-dollar"></i>
+                Generate Bill</div>
+            <div class="nav-item" onclick="loadPage('settings.html', this)"><i class="fas fa-cog"></i> Master Settings
+            </div>
+        </div>
+
+        <div class="nav-item" style="border-top: 1px solid rgba(255,255,255,0.1); color: #ff7675;" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </div>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <div id="current-page-name" style="font-weight: 600; font-size: 18px;">Dashboard Overview</div>
+            <div class="user-profile">
+                <i class="fas fa-user-circle" style="font-size: 24px;"></i>
+                <span>Agri Admin</span>
+            </div>
+        </div>
+
+        <!-- Yahan aapke saare purane pages khulenge -->
+        <iframe src="dashboard.html" id="mainFrame" class="content-frame"></iframe>
+    </div>
+
+    <script>
+        function loadPage(pageUrl, element) {
+            // Frame mein page load karna
+            document.getElementById('mainFrame').src = pageUrl;
+
+            // UI Update
+            document.getElementById('current-page-name').innerText = element.innerText;
+
+            // Active link highlight
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            // Mobile menu close
+            if (window.innerWidth < 768) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function logout() {
+            if (confirm("Duniya mein kahin bhi use karne ke liye session secure rakhna zaruri hai. Logout karein?")) {
+                window.location.href = "index.html"; // Login page
+            }
+        }
+    </script>
+</body>
+
+</html>

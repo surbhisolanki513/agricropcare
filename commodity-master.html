@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commodity Master | Agri Crop Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #004d43;
+            --accent: #c68a12;
+            --bg: #f4f7f9;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 25px;
+            color: #334155;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .page-header p {
+            margin: 8px 0 0;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        /* Form Style */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border-top: 4px solid var(--primary);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(198, 138, 18, 0.1);
+        }
+
+        .rate-preview {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #003630;
+            transform: translateY(-2px);
+        }
+
+        /* Table Style */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            color: #1e293b;
+        }
+
+        tr:hover {
+            background: #fdfdfd;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .edit-i {
+            color: #3b82f6;
+        }
+
+        .del-i {
+            color: #ef4444;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-header">
+        <h1>Commodity Master Matrix</h1>
+        <p>The central source of truth mapping all structural Goods across the tracking platform. Create categorized
+            item vectors, assign un-mutable Metric Ton identifiers, and govern physical pricing thresholds.</p>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="card">
+        <div class="card-title">Register New Commodity</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Commodity Name *</label>
+                <input type="text" id="com-name" placeholder="e.g. WHEAT">
+            </div>
+            <div class="form-group">
+                <label>Monthly Rate (₹/MT) *</label>
+                <input type="number" id="com-monthly-rate" placeholder="e.g. 85" oninput="calculateDaily()">
+                <div class="rate-preview" id="daily-preview">Daily Rate: ₹0.00 / MT</div>
+            </div>
+        </div>
+        <button class="btn-add" onclick="addCommodity()">
+            <i class="fa-solid fa-plus-circle"></i> Add Commodity
+        </button>
+    </div>
+
+    <!-- Commodity List -->
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Commodity</th>
+                    <th>Daily Rate (₹/MT)</th>
+                    <th>Added By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="com-table-body">
+                <!-- Data dynamically loads here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Default Data
+        let commodities = JSON.parse(localStorage.getItem('agriCommodities')) || [
+            { name: 'CHANA (100 PER MT)', daily: 3.33 },
+            { name: 'CHANA (85 PER MT)', daily: 2.83 },
+            { name: 'CUMMIN SEED (160 PER MT)', daily: 5.33 },
+            { name: 'WHEAT (85 PER MT)', daily: 2.83 },
+            { name: 'SOYABEN (65 PER MT)', daily: 2.17 }
+        ];
+
+        function calculateDaily() {
+            const monthly = parseFloat(document.getElementById('com-monthly-rate').value) || 0;
+            const daily = (monthly / 30).toFixed(2);
+            document.getElementById('daily-preview').innerText = `Daily Rate: ₹${daily} / MT`;
+            return daily;
+        }
+
+        function loadTable() {
+            const tbody = document.getElementById('com-table-body');
+            tbody.innerHTML = '';
+
+            // User name from profile sync
+            const profile = JSON.parse(localStorage.getItem('agriProfile')) || { name: 'Yogesh Bhatti' };
+
+            commodities.forEach((com, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${com.name.toUpperCase()}</strong></td>
+                        <td style="color:var(--primary); font-weight:700;">₹${com.daily}</td>
+                        <td>${profile.name}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn del-i" onclick="deleteCom(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            localStorage.setItem('agriCommodities', JSON.stringify(commodities));
+        }
+
+        function addCommodity() {
+            const nameInput = document.getElementById('com-name').value;
+            const monthlyRate = document.getElementById('com-monthly-rate').value;
+            const dailyCalc = calculateDaily();
+
+            if (!nameInput || !monthlyRate) { alert("Please enter both fields"); return; }
+
+            const fullName = `${nameInput} (${monthlyRate} PER MT)`;
+
+            commodities.push({
+                name: fullName,
+                daily: dailyCalc
+            });
+
+            document.getElementById('com-name').value = '';
+            document.getElementById('com-monthly-rate').value = '';
+            document.getElementById('daily-preview').innerText = 'Daily Rate: ₹0.00 / MT';
+
+            loadTable();
+        }
+
+        function deleteCom(index) {
+            if (confirm("Remove this commodity?")) {
+                commodities.splice(index, 1);
+                loadTable();
+            }
+        }
+
+        window.onload = loadTable;
+    </script>
+</body>
+
+</html>

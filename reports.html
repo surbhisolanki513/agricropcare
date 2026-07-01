@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Crop Care - Hybrid Billing System</title>
+    <style>
+        :root {
+            --primary: #004d43;
+            --accent: #c68a12;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: #000;
+        }
+
+        /* Control Panel */
+        #input-section {
+            background: #fff;
+            padding: 20px;
+            max-width: 1100px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary);
+        }
+
+        .panel-heading {
+            background: #fdf7e7;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-left: 5px solid var(--accent);
+            text-transform: uppercase;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .btn-auto {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-manual {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-print {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Invoice Sheet (A4) */
+        .invoice-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            margin: 20px auto;
+            background: white;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo-box {
+            width: 120px;
+        }
+
+        .logo-box img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .company-name {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .license-badge {
+            display: inline-block;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            padding: 2px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 11px;
+            margin: 8px 0;
+        }
+
+        .billing-row {
+            background-color: var(--light-bg);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .client-name-out {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .section-header {
+            border-left: 5px solid #e67e22;
+            background-color: var(--light-bg);
+            padding: 8px 15px;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        table td {
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            border-bottom: 1px solid #ddd;
+            color: #000;
+            font-weight: 500;
+        }
+
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 30px;
+            gap: 30px;
+        }
+
+        .banking-details {
+            flex: 1;
+            font-size: 11px;
+            line-height: 1.8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            color: #000;
+        }
+
+        .total-box {
+            background-color: var(--primary) !important;
+            color: white !important;
+            padding: 15px 30px;
+            border-radius: 6px;
+            text-align: right;
+            width: 260px;
+        }
+
+        .total-amount {
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .sig-section {
+            text-align: center;
+            border: 1.5px solid var(--primary);
+            padding: 5px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        canvas {
+            background: #fff;
+            width: 100%;
+            height: 70px;
+            touch-action: none;
+        }
+
+        .amount-words {
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 15px 0;
+            text-transform: uppercase;
+        }
+
+        @media print {
+            @page {
+                margin: 0;
+            }
+
+            body {
+                margin: 1.5cm;
+                background: white;
+            }
+
+            #input-section {
+                display: none;
+            }
+
+            .invoice-page {
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CONTROL PANEL -->
+    <div id="input-section">
+
+        <!-- SECTION 1: AUTOMATIC -->
+        <div class="panel-heading">Option 1: Automatic Data Fetch (From Stock)</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Select Client</label>
+                <select id="auto_client_select" onchange="syncAutoDetails()"></select>
+            </div>
+            <div class="form-group">
+                <label>Select Billing Month</label>
+                <input type="month" id="auto_month" onchange="loadAutomatedData()">
+            </div>
+            <div class="form-group">
+                <label>Rent Rate (₹/MT)</label>
+                <input type="number" id="auto_rate" value="85">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button class="btn-auto" style="width:100%" onclick="loadAutomatedData()">Load Automated Bill</button>
+            </div>
+        </div>
+
+        <hr style="opacity:0.1; margin:25px 0;">
+
+        <!-- SECTION 2: MANUAL -->
+        <div class="panel-heading" style="background:#eef2ff; color:#3b82f6; border-left-color:#3b82f6;">Option 2: Bill
+            Entry Panel (Manual Entry)</div>
+        <div class="form-grid">
+            <div class="form-group"><label>Party Name</label><input type="text" id="in_party" oninput="syncHeaders()">
+            </div>
+            <div class="form-group"><label>Invoice No</label><input type="text" id="in_invno" value="ACC/2026/001"
+                    oninput="syncHeaders()"></div>
+            <div class="form-group"><label>Period (Text)</label><input type="text" id="in_period" value="April 2026"
+                    oninput="syncHeaders()"></div>
+            <div class="form-group"><label>PAN NO.</label><input type="text" id="in_pan" value="BHI1234567"
+                    oninput="syncHeaders()"></div>
+            <div class="form-group"><label>GST NUMBER</label><input type="text" id="in_gst" value="24AACFP6453CIZX"
+                    oninput="syncHeaders()"></div>
+            <div class="form-group"><label>Invoice Date</label><input type="date" id="in_date" oninput="syncHeaders()">
+            </div>
+        </div>
+        <div class="form-grid"
+            style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div class="form-group"><label>Commodity</label><input type="text" id="row_comm" value="WHEAT"></div>
+            <div class="form-group"><label>Weight (MT)</label><input type="number" id="row_weight" step="0.001"
+                    value="104.380"></div>
+            <div class="form-group"><label>From</label><input type="date" id="row_from"></div>
+            <div class="form-group"><label>To</label><input type="date" id="row_to"></div>
+            <div style="display:flex; align-items:flex-end;">
+                <button class="btn-manual" style="width:100%" onclick="addManualRow()">+ Add New Row</button>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-print" onclick="window.print()">Print A4 Invoice</button>
+            <button class="btn-clear" onclick="resetAll()">Reset All Data</button>
+            <button style="background:#666; color:white;" onclick="clearSig()">Clear Signature</button>
+        </div>
+    </div>
+
+    <!-- INVOICE PAGE -->
+    <div class="invoice-page">
+        <div class="header">
+            <div class="logo-box"><img src="./logo.png" alt="LOGO" onerror="this.style.display='none'"></div>
+            <div style="text-align: right;">
+                <h1 class="company-name">AGRI CROP CARE WAREHOUSE & LOGISTICS</h1>
+                <div class="license-badge">License No: GJ-20-0296072</div>
+                <div style="font-size: 11px; line-height: 1.5; color: #333;">
+                    Vraj 3, Patidad Road, Gundala, Gondal (Rajkot) - 360311<br>
+                    <strong>GSTIN:</strong> 24BGNPR6060H1Z5 | <strong>Mo:</strong> +91 99133 05200
+                </div>
+            </div>
+        </div>
+
+        <div class="billing-row">
+            <div>
+                <small style="color: #666;">BILLED TO:</small>
+                <div class="client-name-out" id="out_party">Party Name</div>
+            </div>
+            <div style="text-align: right; font-size: 12px; line-height: 1.6;">
+                <strong>Inv No:</strong> <span id="out_invno">ACC/2026/001</span><br>
+                <strong>Date:</strong> <span id="out_today">-</span><br>
+                <strong>Period:</strong> <span id="out_period">April 2026</span><br>
+                <strong>PAN NO.</strong> <span id="out_pan">BHI1234567</span><br>
+                <strong>GST NUMBER</strong> <span id="out_gst">24AACFP6453CIZX</span>
+            </div>
+        </div>
+
+        <div class="section-header">STOCK MOVEMENT LEDGER</div>
+        <table id="table-a">
+            <thead>
+                <tr>
+                    <th>DATE RANGE / DATE</th>
+                    <th>COMMODITY</th>
+                    <th>ACTIVITY</th>
+                    <th>WEIGHT (MT)</th>
+                    <th>BALANCE (MT)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="section-header">STORAGE RENT CALCULATION</div>
+        <table id="table-b">
+            <thead>
+                <tr>
+                    <th>RENT PERIOD</th>
+                    <th>AVG. STOCK (MT)</th>
+                    <th>DAYS</th>
+                    <th>RATE (₹/MT)</th>
+                    <th>RENT AMOUNT (₹)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="amount-words" id="out_words">ZERO RUPEES ONLY</div>
+
+        <div class="footer-row">
+            <div class="banking-details">
+                <strong style="color: var(--primary);">BANKING DETAILS</strong><br>
+                Account Name: <strong>Agri Crop Care Warehouse & Logistics</strong><br>
+                Bank Name: <strong>Bandhan Bank</strong><br>
+                A/C No: <strong>20100081701747</strong> | IFSC: <strong>BDBL0002489</strong>
+            </div>
+
+            <div>
+                <div class="total-box">
+                    <small style="font-size: 10px; font-weight: bold;">GRAND TOTAL DUE</small><br>
+                    <span class="total-amount">₹ <span id="out_total">0.00</span></span>
+                </div>
+                <div class="sig-section">
+                    <canvas id="sig-canvas" width="300" height="80"></canvas>
+                    <div
+                        style="font-size:10px; font-weight:bold; color:var(--primary); border-top:1px solid var(--primary); margin-top:5px; text-transform:uppercase;">
+                        Authorized Signatory</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let billRows = [];
+        const dbClients = JSON.parse(localStorage.getItem('agriClients')) || [];
+        const dbTransactions = JSON.parse(localStorage.getItem('agriTransactions')) || [];
+
+        function init() {
+            const select = document.getElementById('auto_client_select');
+            select.innerHTML = '<option value="">-- Choose Party --</option>';
+            dbClients.forEach(c => select.innerHTML += `<option value="${c.name}">${c.name}</option>`);
+            document.getElementById('in_date').valueAsDate = new Date();
+            syncHeaders();
+        }
+
+        // --- OPTION A: AUTOMATED LOGIC ---
+        function syncAutoDetails() {
+            const name = document.getElementById('auto_client_select').value;
+            const client = dbClients.find(c => c.name === name);
+            if (client) {
+                document.getElementById('in_party').value = name;
+                document.getElementById('in_pan').value = client.pan || 'NA';
+                document.getElementById('in_gst').value = client.gst || 'NA';
+                syncHeaders();
+            }
+        }
+
+        function loadAutomatedData() {
+            const clientName = document.getElementById('auto_client_select').value;
+            const monthVal = document.getElementById('auto_month').value;
+            const rate = parseFloat(document.getElementById('auto_rate').value);
+            if (!clientName || !monthVal) return;
+
+            const [year, month] = monthVal.split('-').map(Number);
+            const firstDay = new Date(year, month - 1, 1);
+            let runningBal = 0;
+
+            dbTransactions.forEach(t => {
+                if (t.cl === clientName && new Date(t.date) < firstDay) {
+                    runningBal += t.isOutward ? -parseFloat(t.qty) : parseFloat(t.qty);
+                }
+            });
+
+            const thisMonthTrans = dbTransactions.filter(t => t.cl === clientName && t.date.startsWith(monthVal));
+
+            billRows = []; // Clear
+            // Add Opening
+            billRows.push({ date: monthVal + "-01", com: '-', activity: 'Opening Balance', qty: '-', bal: runningBal.toFixed(3) });
+
+            thisMonthTrans.forEach(t => {
+                runningBal += t.isOutward ? -parseFloat(t.qty) : parseFloat(t.qty);
+                billRows.push({ date: t.date, com: t.com, activity: (t.isOutward ? 'OUT' : 'IN'), qty: t.qty, bal: runningBal.toFixed(3) });
+            });
+
+            renderBill(runningBal, (rate / 30), new Date(year, month, 0).getDate());
+        }
+
+        // --- OPTION B: MANUAL LOGIC ---
+        function addManualRow() {
+            const from = document.getElementById('row_from').value;
+            const to = document.getElementById('row_to').value;
+            const com = document.getElementById('row_comm').value;
+            const weight = parseFloat(document.getElementById('row_weight').value);
+            const rate = parseFloat(document.getElementById('auto_rate').value);
+
+            if (!from || !to || isNaN(weight)) { alert("Manual details fill karein!"); return; }
+
+            const days = Math.ceil(Math.abs(new Date(to) - new Date(from)) / (1000 * 60 * 60 * 24)) + 1;
+            const rent = weight * (rate / 30) * days;
+
+            billRows.push({ manual: true, from: formatDate(from), to: formatDate(to), com, days, weight: weight.toFixed(3), rent: rent.toFixed(2), dRate: (rate / 30).toFixed(2) });
+            renderBill();
+        }
+
+        function renderBill(finalBal = 0, dRate = 0, days = 0) {
+            const tA = document.querySelector('#table-a tbody');
+            const tB = document.querySelector('#table-b tbody');
+            tA.innerHTML = ''; tB.innerHTML = '';
+            let total = 0;
+
+            billRows.forEach(row => {
+                if (row.manual) {
+                    total += parseFloat(row.rent);
+                    tA.innerHTML += `<tr><td>${row.from} to ${row.to}</td><td>${row.com}</td><td>Manual Entry</td><td>${row.weight}</td><td>${row.weight}</td></tr>`;
+                    tB.innerHTML += `<tr><td>${row.from} to ${row.to}</td><td>${row.weight} MT</td><td>${row.days}</td><td>₹${row.dRate}</td><td>₹${row.rent}</td></tr>`;
+                } else {
+                    tA.innerHTML += `<tr><td>${row.date}</td><td>${row.com}</td><td>${row.activity}</td><td>${row.qty}</td><td>${row.bal}</td></tr>`;
+                }
+            });
+
+            if (finalBal > 0) {
+                let autoRent = finalBal * dRate * days;
+                total += autoRent;
+                tB.innerHTML += `<tr><td>Auto Month Calculation</td><td>${finalBal} MT</td><td>${days}</td><td>₹${dRate.toFixed(2)}</td><td>₹${autoRent.toFixed(2)}</td></tr>`;
+            }
+
+            const finalAmt = Math.round(total);
+            document.getElementById('out_total').innerText = finalAmt.toLocaleString('en-IN') + ".00";
+            document.getElementById('out_words').innerText = "IN WORDS: " + numberToWords(finalAmt) + " RUPEES ONLY";
+            syncHeaders();
+        }
+
+        function syncHeaders() {
+            document.getElementById('out_party').innerText = document.getElementById('in_party').value || 'Party Name';
+            document.getElementById('out_invno').innerText = document.getElementById('in_invno').value;
+            document.getElementById('out_period').innerText = document.getElementById('in_period').value;
+            document.getElementById('out_pan').innerText = document.getElementById('in_pan').value;
+            document.getElementById('out_gst').innerText = document.getElementById('in_gst').value;
+            const bDate = document.getElementById('in_date').value;
+            if (bDate) document.getElementById('out_today').innerText = formatDate(bDate);
+        }
+
+        function formatDate(s) { const d = new Date(s); return d.getDate().toString().padStart(2, '0') + '/' + (d.getMonth() + 1).toString().padStart(2, '0') + '/' + d.getFullYear(); }
+        function resetAll() { billRows = []; renderBill(); }
+
+        function numberToWords(num) {
+            var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+            var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+            if ((num = num.toString()).length > 9) return 'overflow';
+            let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!n) return '';
+            var str = '';
+            str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+            str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
+            str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+            str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+            str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+            return str.toUpperCase();
+        }
+
+        // Sig Pad
+        const canvas = document.getElementById("sig-canvas");
+        const ctx = canvas.getContext("2d");
+        let drawing = false;
+        canvas.addEventListener("mousedown", () => drawing = true);
+        canvas.addEventListener("mouseup", () => { drawing = false; ctx.beginPath(); });
+        canvas.addEventListener("mousemove", (e) => {
+            if (!drawing) return;
+            const r = canvas.getBoundingClientRect();
+            ctx.lineWidth = 2; ctx.lineTo(e.clientX - r.left, e.clientY - r.top);
+            ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top);
+        });
+        function clearSig() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>

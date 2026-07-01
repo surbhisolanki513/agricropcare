@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Master | Agri Crop Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #004d43;
+            --accent: #c68a12;
+            --bg: #f4f7f9;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 25px;
+            color: #334155;
+        }
+
+        /* Header Area */
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .page-header p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Form Card */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #003630;
+            transform: translateY(-2px);
+        }
+
+        /* Table Area */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            color: #1e293b;
+        }
+
+        tr:hover {
+            background: #fdfdfd;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+
+        .edit-btn {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .del-btn {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-header">
+        <h1>Warehouse Master</h1>
+        <p>Manage warehouse facilities, monitor occupied capacity, and update storage status.</p>
+    </div>
+
+    <!-- ADD/EDIT FORM -->
+    <div class="card">
+        <div class="card-title" id="form-title">
+            <i class="fa-solid fa-warehouse"></i> Add New Warehouse
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Warehouse ID (Optional)</label>
+                <input type="text" id="wh-id" placeholder="e.g. WH-001">
+            </div>
+            <div class="form-group">
+                <label>Warehouse Name *</label>
+                <input type="text" id="wh-name" placeholder="e.g. Bhalal Dharmendrabhai 1">
+            </div>
+            <div class="form-group">
+                <label>Address *</label>
+                <input type="text" id="wh-address" placeholder="e.g. GONDAL">
+            </div>
+            <div class="form-group">
+                <label>Total Capacity (MT) *</label>
+                <input type="number" id="wh-capacity" placeholder="1500">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-primary" id="save-btn" onclick="saveWarehouse()">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Save Warehouse
+            </button>
+            <button class="btn" style="background:#e2e8f0; display:none;" id="cancel-btn"
+                onclick="resetForm()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- REGISTERED LIST -->
+    <div class="table-container">
+        <div
+            style="padding:15px 20px; font-weight:700; border-bottom:1px solid #f1f5f9; font-size:14px; color:var(--primary);">
+            Registered Warehouses
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Total (MT)</th>
+                        <th>Occupied (MT)</th>
+                        <th>Available (MT)</th>
+                        <th>Status</th>
+                        <th>Added By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="wh-table-body">
+                    <!-- Data will load here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let warehouses = JSON.parse(localStorage.getItem('agriWarehouses')) || [
+            { id: '-', name: 'Bhalal Dharmendrabhai 1', address: 'GONDAL', total: 1500, occupied: 765.08, status: 'Active', user: 'Yogesh Bhatti' },
+            { id: '-', name: 'Parsana Virjibhai Ghushabhai 1', address: 'GONDAL', total: 1500, occupied: 1443.855, status: 'Active', user: 'Yogesh Bhatti' },
+            { id: '-', name: 'Ranjanaben Bhalala 1', address: 'GONDAL', total: 1500, occupied: 790.37, status: 'Active', user: 'Yogesh Bhatti' },
+            { id: '-', name: 'Ritaben Amitkumar Vithalani 1', address: 'GONDAL', total: 1000, occupied: 805.495, status: 'Active', user: 'Yogesh Bhatti' }
+        ];
+
+        let editIndex = -1;
+
+        function loadTable() {
+            const tbody = document.getElementById('wh-table-body');
+            tbody.innerHTML = '';
+
+            warehouses.forEach((wh, index) => {
+                const available = (wh.total - wh.occupied).toFixed(3);
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${wh.id}</td>
+                        <td><strong>${wh.name}</strong></td>
+                        <td>${wh.address}</td>
+                        <td>${wh.total.toLocaleString()}</td>
+                        <td style="color:#ef4444; font-weight:600;">${wh.occupied.toLocaleString()}</td>
+                        <td style="color:#16a34a; font-weight:600;">${available}</td>
+                        <td><span class="badge badge-active">${wh.status}</span></td>
+                        <td>${wh.user}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn-icon edit-btn" onclick="editWH(${index})"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-icon del-btn" onclick="deleteWH(${index})"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            localStorage.setItem('agriWarehouses', JSON.stringify(warehouses));
+        }
+
+        function saveWarehouse() {
+            const id = document.getElementById('wh-id').value || '-';
+            const name = document.getElementById('wh-name').value;
+            const addr = document.getElementById('wh-address').value;
+            const cap = parseFloat(document.getElementById('wh-capacity').value);
+
+            if (!name || !addr || !cap) { alert("Please fill all required fields!"); return; }
+
+            // Profile se user ka naam uthana
+            const profile = JSON.parse(localStorage.getItem('agriProfile')) || { name: 'Yogesh Bhatti' };
+
+            const whData = {
+                id: id,
+                name: name,
+                address: addr,
+                total: cap,
+                occupied: editIndex > -1 ? warehouses[editIndex].occupied : 0, // Naye mein 0 rahega
+                status: 'Active',
+                user: profile.name
+            };
+
+            if (editIndex > -1) {
+                warehouses[editIndex] = whData;
+                editIndex = -1;
+            } else {
+                warehouses.push(whData);
+            }
+
+            resetForm();
+            loadTable();
+        }
+
+        function editWH(index) {
+            editIndex = index;
+            const wh = warehouses[index];
+            document.getElementById('wh-id').value = wh.id;
+            document.getElementById('wh-name').value = wh.name;
+            document.getElementById('wh-address').value = wh.address;
+            document.getElementById('wh-capacity').value = wh.total;
+
+            document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Warehouse';
+            document.getElementById('save-btn').innerHTML = '<i class="fa-solid fa-check"></i> Update Warehouse';
+            document.getElementById('cancel-btn').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function deleteWH(index) {
+            if (confirm("Are you sure you want to delete this warehouse?")) {
+                warehouses.splice(index, 1);
+                loadTable();
+            }
+        }
+
+        function resetForm() {
+            editIndex = -1;
+            document.getElementById('wh-id').value = '';
+            document.getElementById('wh-name').value = '';
+            document.getElementById('wh-address').value = '';
+            document.getElementById('wh-capacity').value = '';
+            document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-warehouse"></i> Add New Warehouse';
+            document.getElementById('save-btn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save Warehouse';
+            document.getElementById('cancel-btn').style.display = 'none';
+        }
+
+        window.onload = loadTable;
+    </script>
+</body>
+
+</html>

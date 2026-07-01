@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Ledger | Agri Crop Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #004d43;
+            --accent: #c68a12;
+            --bg: #f4f7f9;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 25px;
+            color: #334155;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .page-header p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Search Section */
+        .search-container {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 10px 0;
+            z-index: 10;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Ledger Grid */
+        .ledger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .client-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            border-left: 5px solid #cbd5e1;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .client-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            border-left-color: var(--primary);
+        }
+
+        .client-card h3 {
+            margin: 0;
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .client-card .mobile {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .balance-strip {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bal-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .bal-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Detail Section (Hidden by default) */
+        #detail-view {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .back-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background: #f8fafc;
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        .text-in {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        .text-out {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .ledger-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main-list-view">
+        <div class="page-header">
+            <h1>Financial Ledger</h1>
+            <p>View consolidated balances and drill down into individual transaction math.</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-box" id="search" placeholder="Search by client name or mobile..."
+                oninput="filterClients()">
+        </div>
+
+        <div class="ledger-grid" id="ledger-grid">
+            <!-- Client Cards will load here -->
+        </div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div id="detail-view">
+        <button class="back-btn" onclick="closeDetail()"><i class="fa-solid fa-arrow-left"></i> Back to Ledger</button>
+        <div class="table-card">
+            <div style="padding:20px; border-bottom:1px solid #eee;">
+                <h2 id="detail-client-name" style="margin:0; font-size:18px; color:var(--primary);"></h2>
+                <small id="detail-client-info" style="color:#64748b;"></small>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Commodity</th>
+                        <th>Warehouse</th>
+                        <th>Type</th>
+                        <th>Weight (MT)</th>
+                        <th>Bags</th>
+                        <th>GP No</th>
+                    </tr>
+                </thead>
+                <tbody id="detail-table-body">
+                    <!-- Transactions load here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let clients = JSON.parse(localStorage.getItem('agriClients')) || [];
+        let transactions = JSON.parse(localStorage.getItem('agriTransactions')) || [];
+
+        function init() {
+            renderLedger();
+        }
+
+        function calculateBalance(clientName) {
+            let totalIn = transactions.filter(t => t.cl === clientName && t.type === 'INWARD').reduce((s, t) => s + parseFloat(t.qty), 0);
+            let totalOut = transactions.filter(t => t.cl === clientName && t.type === 'OUTWARD').reduce((s, t) => s + parseFloat(t.qty), 0);
+            return (totalIn - totalOut).toFixed(3);
+        }
+
+        function renderLedger(data = clients) {
+            const grid = document.getElementById('ledger-grid');
+            grid.innerHTML = data.map(c => {
+                const bal = calculateBalance(c.name);
+                return `
+                    <div class="client-card" onclick="showDetail('${c.name}')">
+                        <h3>${c.name}</h3>
+                        <div class="mobile"><i class="fa-solid fa-phone"></i> ${c.mobile || 'N.A.'}</div>
+                        <div class="balance-strip">
+                            <span class="bal-label">Current Stock Balance</span>
+                            <span class="bal-value">${bal} MT</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterClients() {
+            const term = document.getElementById('search').value.toLowerCase();
+            const filtered = clients.filter(c =>
+                c.name.toLowerCase().includes(term) ||
+                (c.mobile && c.mobile.includes(term))
+            );
+            renderLedger(filtered);
+        }
+
+        function showDetail(clientName) {
+            const client = clients.find(c => c.name === clientName);
+            const clientTrans = transactions.filter(t => t.cl === clientName);
+
+            document.getElementById('main-list-view').style.display = 'none';
+            document.getElementById('detail-view').style.display = 'block';
+
+            document.getElementById('detail-client-name').innerText = clientName;
+            document.getElementById('detail-client-info').innerText = `GST: ${client.gst} | PAN: ${client.pan}`;
+
+            const tbody = document.getElementById('detail-table-body');
+            tbody.innerHTML = clientTrans.map(t => `
+                <tr>
+                    <td>${t.date}</td>
+                    <td>${t.com}</td>
+                    <td>${t.wh}</td>
+                    <td><span class="${t.type === 'INWARD' ? 'text-in' : 'text-out'}">${t.type}</span></td>
+                    <td>${t.qty.toFixed(3)}</td>
+                    <td>${t.bags}</td>
+                    <td>${t.gp}</td>
+                </tr>
+            `).join('');
+
+            if (clientTrans.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">No transactions found for this client.</td></tr>';
+            }
+        }
+
+        function closeDetail() {
+            document.getElementById('main-list-view').style.display = 'block';
+            document.getElementById('detail-view').style.display = 'none';
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
